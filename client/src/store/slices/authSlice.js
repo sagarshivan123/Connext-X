@@ -6,7 +6,7 @@ name:'auth',
 initialState:{
     user:null,
    message:null,
-    loading:false,
+    loading:true,
     error:null,
     isAuthenticated:false,
 },
@@ -75,6 +75,8 @@ getUserSuccess(state, action) {
   addFriendFailed(state, action) {
     state.error = action.payload;
   },
+ 
+  
   resetAuthSlice(state) {
     state.error = null;
     state.message = null;
@@ -82,6 +84,90 @@ getUserSuccess(state, action) {
 }
 });
 
+
+// const authSlice = createSlice({
+//     name: "auth",
+//     initialState: {
+//       user: null,
+//       message: null,
+//       loading: true,   // 👈 important for refresh
+//       error: null,
+//     },
+//     reducers: {
+//       // REGISTER
+//       registerRequest(state) {
+//         state.loading = true;
+//         state.error = null;
+//         state.message = null;
+//       },
+//       registerSuccess(state, action) {
+//         state.loading = false;
+//         state.message = action.payload;
+//       },
+//       registerFailed(state, action) {
+//         state.loading = false;
+//         state.error = action.payload;
+//       },
+  
+//       // LOGIN
+//       loginRequest(state) {
+//         state.loading = true;
+//         state.error = null;
+//         state.message = null;
+//       },
+//       loginSuccess(state, action) {
+//         state.loading = false;
+//         state.user = action.payload; // 👈 auth = user exists
+//       },
+//       loginFailed(state, action) {
+//         state.loading = false;
+//         state.error = action.payload;
+//       },
+  
+//       // LOGOUT
+//       logoutRequest(state) {
+//         state.loading = true;
+//         state.error = null;
+//       },
+//       logoutSuccess(state, action) {
+//         state.loading = false;
+//         state.user = null;
+//         state.message = action.payload;
+//       },
+//       logoutFailed(state, action) {
+//         state.loading = false;
+//         state.error = action.payload;
+//       },
+  
+//       // GET USER (REFRESH FIX)
+//       getUserRequest(state) {
+//         state.loading = true;
+//         state.error = null;
+//       },
+//       getUserSuccess(state, action) {
+//         state.loading = false;
+//         state.user = action.payload;
+//       },
+//       getUserFailed(state) {
+//         state.loading = false;
+//         state.user = null;
+//       },
+  
+//       // ADD FRIEND
+//       addFriendSuccess(state) {
+//         state.message = "Friend added";
+//       },
+//       addFriendFailed(state, action) {
+//         state.error = action.payload;
+//       },
+  
+//       // RESET
+//       resetAuthSlice(state) {
+//         state.error = null;
+//         state.message = null;
+//       },
+//     },
+//   });
 export const register=(data)=>async(dispatch)=>{
 dispatch(authSlice.actions.registerRequest());
 try{
