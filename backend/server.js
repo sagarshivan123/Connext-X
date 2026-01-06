@@ -31,6 +31,9 @@ import messageRouter from "./routes/messageRouter.js";
 import groupRouter from "./routes/groupRouter.js";
 import uploadRouter from "./routes/uploadRouter.js";
 
+app.get('/', (req, res) => {
+  res.send('Hello World!');
+});
 app.use("/api/auth", authRouter);
 app.use("/api/messages", messageRouter);
 app.use("/api/groups", groupRouter);
@@ -43,7 +46,8 @@ app.use("/api/upload", uploadRouter);
 
 export const io = new Server(server, {
   cors: {
-    origin: "http://localhost:5173",
+    origin: ["http://localhost:5173",
+    'https://connext-x.vercel.app'],
     credentials: true
   }
 });
@@ -135,9 +139,7 @@ io.on("connection", (socket) => {
 });
 
 
-app.get('/', (req, res) => {
-  res.send('Hello World!');
-});
+
 server.listen(4000, () => {
   console.log('Server is running on port 4000');
 });
