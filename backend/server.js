@@ -54,7 +54,7 @@ app.use("/uploads", express.static("uploads"));
 
 app.use("/api/upload", uploadRouter);
 
-
+app.set("trust proxy", 1);
 
 export const io = new Server(server, {
   cors: {
