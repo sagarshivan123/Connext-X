@@ -14,12 +14,24 @@ connectDB();
 const server = http.createServer(app);
 app.use(
   cors({
-    origin: ["http://localhost:5173",'https://connext-x.vercel.app'],
+    origin: function (origin, callback) {
+      const allowedOrigins = [
+        "http://localhost:5173",
+        "https://connext-x.vercel.app"
+      ];
+      // Allow any Vercel preview URL or the ones in the list
+      if (!origin || allowedOrigins.includes(origin) || origin.endsWith(".vercel.app")) {
+        callback(null, true);
+      } else {
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
     credentials: true,
   })
 );
 app.use(cookieParser());
 app.use(express.json());
+
 
 
 import User from "./models/userModel.js";
@@ -46,8 +58,14 @@ app.use("/api/upload", uploadRouter);
 
 export const io = new Server(server, {
   cors: {
-    origin: ["http://localhost:5173",
-    'https://connext-x.vercel.app'],
+    origin: (origin, callback) => {
+      // Use the same logic here as above
+      if (!origin || origin.endsWith(".vercel.app") || origin.includes("localhost")) {
+        callback(null, true);
+      } else {
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
     credentials: true
   }
 });
