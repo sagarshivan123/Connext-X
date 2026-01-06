@@ -5,6 +5,9 @@ import jwt from "jsonwebtoken";
 const generateToken = (id) => {
   return jwt.sign({ id }, process.env.JWT_SECRET, { expiresIn: "30d" });
 };
+const isProd = process.env.NODE_ENV === "production";
+
+
 
 export const register = async (req, res) => {
   const {name,email,password} = req.body;
@@ -26,8 +29,8 @@ if (req.file) {
   const token = generateToken(user._id);
   res.cookie("token", token, {
     httpOnly: true,
-    sameSite: "lax",
-    secure: false, // true only in production https
+    secure: isProd,                 // ✅ true on Render
+    sameSite: isProd ? "none" : "lax", // ✅ cross-site
     maxAge: 7 * 24 * 60 * 60 * 1000,
   });
   res.status(201).json({
@@ -42,13 +45,16 @@ if (req.file) {
 export const login = async (req, res) => {
   const {email,password} = req.body;
   const user = await User.findOne({ email }).select("+password");
+  if (!user || !(await user.matchPassword(password))) {
+    return res.status(401).json({ message: "Invalid email or password" });
+  }  
   const token = generateToken(user._id);
   if (user && (await user.matchPassword(password))) {
     res.cookie("token", token, {
       httpOnly: true,
-      secure: false,
-      sameSite: "lax",
-      maxAge: 7 * 24 * 60 * 60 * 1000
+      secure: isProd,                 // ✅ true on Render
+      sameSite: isProd ? "none" : "lax", // ✅ cross-site
+      maxAge: 7 * 24 * 60 * 60 * 1000,
     }).json({
       success: true,
       user: {
