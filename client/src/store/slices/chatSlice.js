@@ -100,6 +100,10 @@ const chatSlice = createSlice({
       state.loading = false;
       state.error = action.payload;
     },
+    clearActiveChat: (state) => {
+      state.selectedChat = null;
+      state.chatType = null;
+    },
   },
 });
 
@@ -136,5 +140,5 @@ export const getGroupMessages = (groupId) => async (dispatch) => {
   }
 };
 
-export const { setSelectedChat, addIncomingMessage } = chatSlice.actions;
+export const { setSelectedChat, addIncomingMessage, clearActiveChat } = chatSlice.actions;
 export default chatSlice.reducer;

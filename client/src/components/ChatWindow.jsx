@@ -1,6 +1,6 @@
 import { useDispatch, useSelector } from "react-redux";
 import MessageInput from "./MessageInput";
-import { getPrivateMessages, getGroupMessages } from "../store/slices/chatSlice";
+import { getPrivateMessages, getGroupMessages, clearActiveChat } from "../store/slices/chatSlice";
 import { useEffect, useState, useRef } from "react";
 import { getSocket } from "../socket/socket";
 import { addMember, removeMember } from "../store/slices/groupSlice";
@@ -575,6 +575,18 @@ console.log("IS ADMIN:", isGroupAdmin);
         <div className="p-4 bg-slate-800/90 backdrop-blur-md border-b border-slate-600/50 shadow-lg">
           <div className="flex justify-between items-center">
             <div className="flex items-center gap-4">
+              {/* Mobile Back button */}
+              <button
+                type="button"
+                className="md:hidden p-2 -ml-2 mr-1 rounded-full hover:bg-slate-700 text-gray-300"
+                aria-label="Back to chats"
+                onClick={() => dispatch(clearActiveChat())}
+              >
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                </svg>
+              </button>
+
               {/* Profile Picture */}
               <div className="relative group cursor-pointer">
 {/* Profile Picture in Header */}

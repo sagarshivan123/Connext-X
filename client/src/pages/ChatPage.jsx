@@ -30,50 +30,6 @@ export default function ChatPage() {
     }
   }, [selectedChat, chatType]);
   
-
-
-  // ========================
-  // SOCKET CONNECTION + LISTENERS
-  // ========================
-  // useEffect(() => {
-  //   if (!user?._id) return;
-
-  //   // Connect socket with userId
-  //   const socket = connectSocket(user._id);
-
-  //   // PRIVATE MESSAGE
-  //   socket.on("receivePrivateMessage", (msg) => {
-  //     dispatch(addIncomingMessage(msg));
-  //   });
-
-  //   // GROUP MESSAGE
-  //   socket.on("receiveGroupMessage", (msg) => {
-  //     dispatch(addIncomingMessage(msg));
-  //   });
-
-  //   // ONLINE USERS
-  //   socket.on("onlineUsers", (online) => {
-  //     console.log("Online users:", online);
-  //   });
-
-  //   // TYPING EVENTS
-  //   socket.on("typing", (senderId) => {
-  //     console.log(senderId, "typing...");
-  //   });
-
-  //   socket.on("stopTyping", (senderId) => {
-  //     console.log(senderId, "stopped typing");
-  //   });
-
-  //   return () => {
-  //     socket.off("receivePrivateMessage");
-  //     socket.off("receiveGroupMessage");
-  //     socket.off("onlineUsers");
-  //     socket.off("typing");
-  //     socket.off("stopTyping");
-  //     disconnectSocket();
-  //   };
-  // }, [user, dispatch]);
   useEffect(() => {
     if (!user?._id) return;
 
@@ -87,15 +43,21 @@ export default function ChatPage() {
 
   return (
     <div className="h-screen flex bg-slate-900 text-white">
-      <Sidebar />
+      {/* Sidebar: visible on mobile only when no chat is selected, always visible on md+ */}
+      <div className={`${selectedChat ? 'hidden' : 'flex'} md:flex flex-col w-full md:w-80 border-r border-slate-800`}>
+        <Sidebar />
+      </div>
 
-      {selectedChat ? (
-        <ChatWindow />
-      ) : (
-        <div className="flex-1 flex items-center justify-center text-gray-400 text-lg">
-          Select a chat to start messaging
-        </div>
-      )}
+      {/* Right pane: hidden on mobile until a chat is selected; on md+ always visible */}
+      <div className={`${selectedChat ? 'flex' : 'hidden'} md:flex flex-1`}>
+        {selectedChat ? (
+          <ChatWindow />
+        ) : (
+          <div className="flex-1 hidden md:flex items-center justify-center text-gray-400 text-lg">
+            Select a chat to start messaging
+          </div>
+        )}
+      </div>
     </div>
   );
 }
