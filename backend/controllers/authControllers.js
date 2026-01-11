@@ -34,10 +34,13 @@ if (req.file) {
     maxAge: 7 * 24 * 60 * 60 * 1000,
   });
   res.status(201).json({
-    _id: user._id,
-    name: user.name,
-    email: user.email,
-    profilePic: user.profilePic,
+    message: "Registered successfully",
+    user: {
+      _id: user._id,
+      name: user.name,
+      email: user.email,
+      profilePic: user.profilePic,
+    },
   });
   
 }

@@ -7,6 +7,8 @@ import { getSocket } from "../socket/socket";
 import MessageInput from "./MessageInput";
 import api from "../store/api";
 
+const BASE_URL = import.meta.env.VITE_API_URL||'http://localhost:4000';
+
 export default function ChatWindow() {
   const dispatch = useDispatch();
   const { messages, selectedChat, chatType } = useSelector((s) => s.chat);
@@ -70,8 +72,9 @@ export default function ChatWindow() {
   }, [messages]);
 
   const avatarSrc = chatType === "private"
-    ? (activeFriend?.profilePic ? `http://localhost:4000${activeFriend.profilePic}` : `https://ui-avatars.com/api/?name=${activeFriend?.name}`)
-    : (activeGroup?.groupPic ? `http://localhost:4000${activeGroup.groupPic}` : `https://ui-avatars.com/api/?name=${activeGroup?.name}`);
+    ? (activeFriend?.profilePic ? `
+      ${BASE_URL}${activeFriend.profilePic}` : `https://ui-avatars.com/api/?name=${activeFriend?.name}`)
+    : (activeGroup?.groupPic ? `${BASE_URL}${activeGroup.groupPic}` : `https://ui-avatars.com/api/?name=${activeGroup?.name}`);
 
   return (
     <div className="flex flex-col flex-1 bg-slate-900 text-white h-full">
@@ -121,24 +124,47 @@ export default function ChatWindow() {
       <main className="flex-1 overflow-y-auto p-4 space-y-4">
         {messages?.map((msg, i) => {
           const isMe = String(msg.sender?._id || msg.sender) === String(user._id);
-          const mediaUrl = msg.mediaUrl ? `http://localhost:4000${msg.mediaUrl}` : null;
+          const mediaUrl = msg.mediaUrl ? `${BASE_URL}${msg.mediaUrl}` : null;
           return (
             <div key={msg._id || i} className={`flex flex-col ${isMe ? 'items-end' : 'items-start'}`}>
               <div className={`max-w-[85%] md:max-w-[70%] p-3 rounded-2xl ${isMe ? 'bg-blue-600' : 'bg-slate-800 border border-slate-700'}`}>
-                {msg.message && <p className="text-sm leading-relaxed">{msg.message}</p>}
-                {mediaUrl && (
-                  <div className="mt-2 overflow-hidden rounded-lg">
-                    {msg.mediaType === "video" ? (
-                      <video controls className="max-h-60 w-full bg-black"><source src={mediaUrl} /></video>
-                    ) : (
-                      <img src={mediaUrl} alt="Shared" className="max-h-60 w-full object-cover cursor-pointer" onClick={() => window.open(mediaUrl, '_blank')} />
-                    )}
-                  </div>
-                )}
-                <div className="text-[10px] mt-1 opacity-50 text-right">
-                  {new Date(msg.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                </div>
-              </div>
+
+{/* Sender name for group chat */}
+{chatType === "group" && !isMe && (
+  <p className="text-xs font-semibold text-blue-400 mb-1">
+    {msg.sender?.name || "Unknown"}
+  </p>
+)}
+
+{msg.message && (
+  <p className="text-sm leading-relaxed">{msg.message}</p>
+)}
+
+{mediaUrl && (
+  <div className="mt-2 overflow-hidden rounded-lg">
+    {msg.mediaType === "video" ? (
+      <video controls className="max-h-60 w-full bg-black">
+        <source src={mediaUrl} />
+      </video>
+    ) : (
+      <img
+        src={mediaUrl}
+        alt="Shared"
+        className="max-h-60 w-full object-cover cursor-pointer"
+        onClick={() => window.open(mediaUrl, '_blank')}
+      />
+    )}
+  </div>
+)}
+
+<div className="text-[10px] mt-1 opacity-50 text-right">
+  {new Date(msg.createdAt).toLocaleTimeString([], {
+    hour: '2-digit',
+    minute: '2-digit'
+  })}
+</div>
+</div>
+
             </div>
           );
         })}

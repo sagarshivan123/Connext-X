@@ -6,7 +6,7 @@ name:'auth',
 initialState:{
     user:null,
    message:null,
-    loading:true,
+   loading: false,
     error:null,
     isAuthenticated:false,
 },
@@ -14,13 +14,14 @@ reducers:{
   registerRequest(state){
     state.loading=true;
     state.error=null;
-    state.message=null;
   },
-  registerSuccess(state,action){
-    state.loading=false;
-    state.message=action.payload;
+  registerSuccess(state, action) {
+    state.loading = false;
+    state.user = action.payload.user;
+    state.message = action.payload.message;
     state.isAuthenticated = true;
   },
+  
   registerFailed(state,action){
     state.loading=false;
     state.error=action.payload;
@@ -176,9 +177,13 @@ try{
             "Content-Type": "multipart/form-data",
           },
     });
-    dispatch(authSlice.actions.registerSuccess(response.data.message));
+    dispatch(authSlice.actions.registerSuccess(response.data));
 }catch(error){
-    dispatch(authSlice.actions.registerFailed(error.response.data.message));
+    dispatch(
+        authSlice.actions.registerFailed(
+          error.response?.data?.message || "Registration failed"
+        )
+      );
 }
 }
 export const login=(data)=>async(dispatch)=>{

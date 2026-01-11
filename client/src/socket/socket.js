@@ -5,10 +5,11 @@ import { addIncomingMessage } from "../store/slices/chatSlice";
 import { store } from "../store/store";
 
 let socket = null;
+const SOCKET_URL = import.meta.env.VITE_API_URL||'http://localhost:4000';
 
 export const connectSocket = (userId) => {
   if (!socket) {
-    socket = io("http://localhost:4000", { withCredentials: true });
+    socket = io(SOCKET_URL, { withCredentials: true });
 
     socket.on("connect", () => {
       console.log("Socket connected:", socket.id);

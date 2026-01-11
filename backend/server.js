@@ -8,8 +8,9 @@ import cookieParser from "cookie-parser";
 import path from "path";
 
 
-const app = express();
+
 dotenv.config();
+const app = express();
 connectDB();
 const server = http.createServer(app);
 app.use(
@@ -19,7 +20,7 @@ app.use(
         "http://localhost:5173",
         "https://connext-x.vercel.app"
       ];
-      // Allow any Vercel preview URL or the ones in the list
+  
       if (!origin || allowedOrigins.includes(origin) || origin.endsWith(".vercel.app")) {
         callback(null, true);
       } else {
@@ -61,7 +62,11 @@ export const io = new Server(server, {
   cors: {
     origin: (origin, callback) => {
       // Use the same logic here as above
-      if (!origin || origin.endsWith(".vercel.app") || origin.includes("localhost")) {
+      if (
+        !origin ||
+        origin.includes("localhost") ||
+        origin.includes(".vercel.app")
+      ) {
         callback(null, true);
       } else {
         callback(new Error("Not allowed by CORS"));

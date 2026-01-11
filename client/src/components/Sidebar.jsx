@@ -7,6 +7,8 @@ import { logout, addFriend, getUser } from "../store/slices/authSlice";
 import { getSocket } from "../socket/socket";
 import api from "../store/api";
 
+const BASE_URL = import.meta.env.VITE_API_URL||'http://localhost:4000';
+
 export default function Sidebar() {
   const dispatch = useDispatch();
   const { user } = useSelector((s) => s.auth);
@@ -66,7 +68,7 @@ export default function Sidebar() {
   // --- Helpers ---
   const getAvatar = (item, isGroup = false) => {
     const pic = isGroup ? item?.groupPic : item?.profilePic;
-    if (pic) return pic.startsWith("http") ? pic : `http://localhost:4000${pic}`;
+    if (pic) return pic.startsWith("http") ? pic :`${BASE_URL}${pic}`
     return `https://ui-avatars.com/api/?name=${encodeURIComponent(item?.name || "U")}&background=${isGroup ? '6366f1' : '475569'}&color=fff`;
   };
 
