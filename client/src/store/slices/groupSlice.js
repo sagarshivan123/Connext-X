@@ -118,8 +118,8 @@ export const addMember = ({ groupId, userId }) => async (dispatch) => {
 export const removeMember = ({ groupId, userId }) => async (dispatch) => {
   dispatch(groupSlice.actions.removeMemberRequest());
   try {
-    const { data } = await api.post(
-      `/groups/remove/${groupId}`,
+    const { data } = await api.put(
+      `/groups/remove-member/${groupId}`,
       { userId },
       { headers: { "Content-Type": "application/json" } }
     );
