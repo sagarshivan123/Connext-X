@@ -103,7 +103,7 @@ export default function Sidebar() {
             {ui.menu && (
               <div className="absolute right-0 mt-2 bg-slate-800 border border-slate-700 rounded-xl shadow-2xl w-48 z-50 overflow-hidden">
                 <button className="w-full text-left p-3 text-white hover:bg-slate-700 text-sm" onClick={() => { setUi({ ...ui, menu: false }); avatarInputRef.current.click(); }}>Change Avatar</button>
-                <button className="w-full text-left p-3 text-white hover:bg-slate-700 text-sm" onClick={() => setUi({ ...ui, addFriend: true, menu: false })}>Add Friend</button>
+                {/* <button className="w-full text-left p-3 text-white hover:bg-slate-700 text-sm" onClick={() => setUi({ ...ui, addFriend: true, menu: false })}>Add Friend</button> */}
                 <button className="w-full text-left p-3 text-white hover:bg-slate-700 text-sm" onClick={() => setUi({ ...ui, createGroup: true, menu: false })}>Create Group</button>
               </div>
             )}
