@@ -53,7 +53,7 @@ import ChatPage from "./pages/ChatPage";
 import ProtectedRoute from "./components/ProtectedRoute";
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { getUser } from "./store/slices/authSlice";
+import { getUser,getAllUsers } from "./store/slices/authSlice";
 
 function App() {
   const dispatch = useDispatch();
@@ -62,6 +62,7 @@ function App() {
   useEffect(() => {
     // This triggers the /api/auth/me call
     dispatch(getUser());
+    dispatch(getAllUsers());
   }, [dispatch]);
 
   return (

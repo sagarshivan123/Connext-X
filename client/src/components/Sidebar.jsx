@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { useEffect, useState, useRef } from "react";
 import { setSelectedChat, getPrivateMessages, getGroupMessages } from "../store/slices/chatSlice";
 import { getMyGroups, createGroup } from "../store/slices/groupSlice";
-import { logout, addFriend, getUser } from "../store/slices/authSlice";
+import { logout, addFriend, getUser,getAllUsers } from "../store/slices/authSlice";
 import { getSocket } from "../socket/socket";
 import api from "../store/api";
 
@@ -11,7 +11,7 @@ const BASE_URL = import.meta.env.VITE_API_URL||'http://localhost:4000';
 
 export default function Sidebar() {
   const dispatch = useDispatch();
-  const { user } = useSelector((s) => s.auth);
+  const { user,allUsers } = useSelector((s) => s.auth);
   const { groups } = useSelector((s) => s.group);
   const { onlineUsers } = useSelector((s) => s.socket);
   const { selectedChat, chatType } = useSelector((s) => s.chat);
@@ -24,6 +24,7 @@ export default function Sidebar() {
 
   useEffect(() => {
     dispatch(getMyGroups());
+    dispatch(getAllUsers());
   }, [dispatch]);
 
   // --- Handlers ---
@@ -73,7 +74,12 @@ export default function Sidebar() {
   };
 
   const filteredFriends = user?.friends?.filter(f => f.name.toLowerCase().includes(searchTerm.toLowerCase())) || [];
+
   const filteredGroups = groups?.filter(g => g.name.toLowerCase().includes(searchTerm.toLowerCase())) || [];
+
+  const filteredUsers =allUsers?.filter(u =>u._id !== user?._id &&
+  u.name.toLowerCase().includes(searchTerm.toLowerCase())) || [];
+
 
   return (
     <aside className="w-80 h-full bg-slate-900 border-r border-slate-700 flex flex-col shadow-xl">
@@ -126,9 +132,10 @@ export default function Sidebar() {
         )}
 
         {/* Friends */}
-        {filteredFriends.length > 0 && (
+        {/* {filteredFriends.length > 0 && (
           <div>
             <p className="text-xs font-bold text-slate-500 uppercase mb-2">Friends</p>
+            
             {filteredFriends.map(f => (
               <div key={f._id} onClick={() => choosePrivateChat(f._id)} className={`flex items-center gap-3 p-3 rounded-xl cursor-pointer hover:bg-slate-800 ${selectedChat?.id === f._id ? 'bg-slate-800 border border-green-500/30' : ''}`}>
                 <div className="relative">
@@ -139,7 +146,42 @@ export default function Sidebar() {
               </div>
             ))}
           </div>
+        )} */}
+
+        {/* Users */}
+        {filteredUsers.length > 0 && (
+  <div>
+    <p className="text-xs font-bold text-slate-500 uppercase mb-2">
+      Users
+    </p>
+
+    {filteredUsers.map(u => (
+      <div
+        key={u._id}
+        onClick={() => choosePrivateChat(u._id)}
+        className={`flex items-center gap-3 p-3 rounded-xl cursor-pointer hover:bg-slate-800
+          ${selectedChat?.id === u._id ? 'bg-slate-800 border border-green-500/30' : ''}`}
+      >
+        <div className="relative">
+          <img
+            src={getAvatar(u)}
+            className="w-10 h-10 rounded-full object-cover"
+            alt={u.name}
+          />
+          <div
+            className={`absolute -bottom-1 -right-1 w-3 h-3 rounded-full border-2 border-slate-900
+              ${onlineUsers?.includes(u._id) ? 'bg-green-500' : 'bg-slate-500'}`}
+          ></div>
+        </div>
+
+        <p className="text-white text-sm font-medium truncate">
+          {u.name}
+        </p>
+      </div>
+    ))}
+  </div>
         )}
+
       </div>
 
       <div className="p-4 border-t border-slate-700">

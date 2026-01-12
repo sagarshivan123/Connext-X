@@ -12,7 +12,7 @@ const BASE_URL = import.meta.env.VITE_API_URL||'http://localhost:4000';
 export default function ChatWindow() {
   const dispatch = useDispatch();
   const { messages, selectedChat, chatType } = useSelector((s) => s.chat);
-  const { user } = useSelector((s) => s.auth);
+  const { user,allUsers } = useSelector((s) => s.auth);
   const { groups } = useSelector((state) => state.group);
   
   const messagesEndRef = useRef(null);
@@ -21,7 +21,10 @@ export default function ChatWindow() {
   const [ui, setUi] = useState({ menu: false, addModal: false, listModal: false });
   const [memberEmail, setMemberEmail] = useState("");
 
-  const activeFriend = user?.friends?.find((f) => f._id === selectedChat);
+  // const activeFriend = user?.friends?.find((f) => f._id === selectedChat);
+  const activeFriend = allUsers?.find(
+    (u) => String(u._id) === String(selectedChat)
+  );
   const activeGroup = groups?.find((g) => String(g._id) === String(selectedChat));
 
   const isGroupAdmin = useMemo(() => {

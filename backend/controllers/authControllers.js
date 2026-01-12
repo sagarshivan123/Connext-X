@@ -128,6 +128,13 @@ export const addFriend = async (req, res) => {
   res.json({ message: "User added successfully", friend: otherUser });
 };
 
+export const getAllUsers = async (req, res) => {
+  const users = await User.find({ _id: { $ne: req.user._id } })
+    .select("_id name email profilePic");
+
+  res.status(200).json(users);
+};
+
 export const findUser=async (req, res) => {
   const { email } = req.body;
   const user = await User.findOne({ email }).select("_id name email");
