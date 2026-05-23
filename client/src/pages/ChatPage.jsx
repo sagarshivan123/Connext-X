@@ -1,14 +1,12 @@
 // src/pages/ChatPage.jsx
 import Sidebar from "../components/Sidebar";
 import ChatWindow from "../components/ChatWindow";
-import { useSelector, useDispatch } from "react-redux";
+import { useSelector} from "react-redux";
 import { useEffect } from "react";
 import { connectSocket, disconnectSocket } from "../socket/socket";
-import { getPrivateMessages, getGroupMessages } from "../store/slices/chatSlice";
 
 export default function ChatPage() {
-  const dispatch = useDispatch();
-  const { selectedChat, chatType } = useSelector((state) => state.chat);
+  const { selectedChat} = useSelector((state) => state.chat);
   const { user } = useSelector((state) => state.auth);
 
   // Load Messages when chat selection changes

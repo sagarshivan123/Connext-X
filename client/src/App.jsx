@@ -5,7 +5,7 @@ import ChatPage from "./pages/ChatPage";
 import ProtectedRoute from "./components/ProtectedRoute";
 import { useEffect } from "react";
 import { useDispatch,useSelector } from "react-redux";
-import { getUser ,getAllUsers} from "./store/slices/authSlice";
+import { getUser} from "./store/slices/authSlice";
 import { connectSocket } from "./socket/socket";
 
 function App() {

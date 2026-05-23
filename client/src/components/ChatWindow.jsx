@@ -7,6 +7,8 @@ import { getSocket } from "../socket/socket";
 import MessageInput from "./MessageInput";
 import api from "../store/api";
 
+
+
 const BASE_URL = import.meta.env.VITE_API_URL||'http://localhost:4000';
 
 export default function ChatWindow() {
@@ -43,7 +45,9 @@ export default function ChatWindow() {
     try {
       await api.put("/upload/update-group-pic", formData);
       dispatch(getMyGroups());
-    } catch (err) { alert("Failed to update image"); }
+    } catch (err) { 
+      console.error(err);
+      alert("Failed to update image"); }
   };
 
   const handleMemberAction = async (type, userId) => {
@@ -59,7 +63,9 @@ export default function ChatWindow() {
       dispatch(getMyGroups());
       dispatch(getGroupMessages(selectedChat));
       setUi({ ...ui, addModal: false });
-    } catch (err) { alert("Action failed"); }
+    } catch (err) { 
+      console.error(err);
+      alert("Action failed"); }
   };
 
   useEffect(() => {
@@ -79,12 +85,14 @@ export default function ChatWindow() {
       ${BASE_URL}${activeFriend.profilePic}` : `https://ui-avatars.com/api/?name=${activeFriend?.name}`)
     : (activeGroup?.groupPic ? `${BASE_URL}${activeGroup.groupPic}` : `https://ui-avatars.com/api/?name=${activeGroup?.name}`);
 
+    
+
   return (
     <div className="flex flex-col flex-1 bg-slate-900 text-white h-full">
       <input type="file" ref={groupImageInputRef} hidden onChange={handleGroupPicChange} accept="image/*" />
 
       {/* Header */}
-      <header className="p-4 bg-slate-800 border-b border-slate-700 flex justify-between items-center shadow-md">
+      <header className="h-20 px-5 border-b border-slate-800 bg-slate-900/90 backdrop-blur flex items-center justify-between">
         <div className="flex items-center gap-3">
           {/* Back Button for Mobile */}
           <button 
@@ -103,7 +111,7 @@ export default function ChatWindow() {
             )}
           </div>
           <div>
-            <h2 className="font-bold text-sm md:text-base truncate max-w-[150px] md:max-w-none">
+            <h2 className="font-bold text-sm md:text-base truncate max-w-37.5 md:max-w-none">
               {chatType === "private" ? activeFriend?.name : activeGroup?.name}
             </h2>
             {chatType === "group" && <p className="text-[10px] md:text-xs text-slate-400">{activeGroup?.members?.length} members</p>}
@@ -124,13 +132,15 @@ export default function ChatWindow() {
       </header>
 
       {/* Messages */}
-      <main className="flex-1 overflow-y-auto p-4 space-y-4">
+      <main className="flex-1 overflow-y-auto px-5 py-6 space-y-5 bg-slate-950">
         {messages?.map((msg, i) => {
           const isMe = String(msg.sender?._id || msg.sender) === String(user._id);
           const mediaUrl = msg.mediaUrl ? `${BASE_URL}${msg.mediaUrl}` : null;
           return (
             <div key={msg._id || i} className={`flex flex-col ${isMe ? 'items-end' : 'items-start'}`}>
-              <div className={`max-w-[85%] md:max-w-[70%] p-3 rounded-2xl ${isMe ? 'bg-blue-600' : 'bg-slate-800 border border-slate-700'}`}>
+              <div className={`max-w-[85%] md:max-w-[70%] p-3 rounded-2xl px-4 py-3 ${isMe
+  ? 'bg-blue-600 shadow-lg '
+  : 'bg-slate-800 border border-slate-700'}`}>
 
 {/* Sender name for group chat */}
 {chatType === "group" && !isMe && (
@@ -140,7 +150,7 @@ export default function ChatWindow() {
 )}
 
 {msg.message && (
-  <p className="text-sm leading-relaxed">{msg.message}</p>
+  <p className="text-[15px] leading-relaxed tracking-wide">{msg.message}</p>
 )}
 
 {mediaUrl && (
@@ -179,7 +189,7 @@ export default function ChatWindow() {
       {/* Modals (Simplified Add/List) */}
       {ui.addModal && (
         <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4">
-          <div className="bg-slate-800 p-6 rounded-2xl w-full max-w-sm border border-slate-700">
+          <div className="bg-slate-900 border border-slate-700 rounded-3xl p-6 shadow-2xl w-full max-w-sm ">
             <h3 className="font-bold mb-4">Add Member</h3>
             <input className="w-full p-2 bg-slate-900 rounded border border-slate-700 mb-4 outline-none text-sm" placeholder="User Email" value={memberEmail} onChange={e => setMemberEmail(e.target.value)} />
             <div className="flex gap-2">
@@ -202,7 +212,7 @@ export default function ChatWindow() {
                 <div key={m._id} className="flex items-center justify-between p-3 bg-slate-900/50 rounded-xl">
                   <div className="flex items-center gap-3">
                     <img src={m.avatar || `https://ui-avatars.com/api/?name=${m.name}`} className="w-8 h-8 rounded-full" alt="" />
-                    <span className="text-sm truncate max-w-[120px]">{m.name}</span>
+                    <span className="text-sm truncate max-w-30">{m.name}</span>
                   </div>
                   {isGroupAdmin && m._id !== user._id && (
                     <button onClick={() => handleMemberAction('remove', m._id)} className="text-red-500 text-xs font-bold hover:bg-red-500/10 p-2 rounded-lg">Remove</button>

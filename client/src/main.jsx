@@ -5,7 +5,6 @@ import { BrowserRouter } from "react-router-dom";
 import "./index.css";
 import { store } from "./store/store";
 import App from "./App";
-import { getUser } from "./store/slices/authSlice";  // <-- for auto login
 
 
 ReactDOM.createRoot(document.getElementById("root")).render(

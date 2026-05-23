@@ -71,7 +71,7 @@ getUserSuccess(state, action) {
     state.user = null;
     state.isAuthenticated = false;
   },
-  addFriendSuccess(state, action) {
+  addFriendSuccess(state) {
     state.message = "Friend added";
   },
   addFriendFailed(state, action) {
@@ -81,7 +81,9 @@ getUserSuccess(state, action) {
     state.allUsers = action.payload;
     state.error = null;
   },
-
+  getAllUsersRequest(state){
+    state.loading = true;
+},
   getAllUsersFailed(state, action) {
     state.error = action.payload;
   },
@@ -115,26 +117,30 @@ try{
     const response=await api.post('/auth/login',data, { withCredentials: true });
     dispatch(authSlice.actions.loginSuccess(response.data.user));
 }catch(error){
-    dispatch(authSlice.actions.loginFailed(error.response.data.message));
+    dispatch(authSlice.actions.loginFailed(error.response?.data?.message || "Something went wrong"));
 }
 }
 export const logout=()=>async(dispatch)=>{
 dispatch(authSlice.actions.logoutRequest());
 try{
-    const response=await api.post('/auth/logout');
+    const response=await api.post('/auth/logout', {}, {
+      withCredentials: true
+   });
     dispatch(authSlice.actions.logoutSuccess(response.data.message));
 }catch(error){
-    dispatch(authSlice.actions.logoutFailed(error.response.data.message));
+    dispatch(authSlice.actions.logoutFailed(error.response?.data?.message || "Something went wrong"));
 }}
 
 export const getUser=()=>async(dispatch)=>{
 dispatch(authSlice.actions.getUserRequest());
 try{
-    const response=await api.get('/auth/me');
+  const response = await api.get('/auth/me', {
+    withCredentials: true
+ });
     dispatch(authSlice.actions.getUserSuccess(response.data.user));
 }
 catch(error){
-    dispatch(authSlice.actions.getUserFailed());
+    dispatch(authSlice.actions.getUserFailed(error.response?.data?.message || "Something went wrong"));
 }
 }
 
@@ -152,7 +158,7 @@ export const addFriend=(data)=>async(dispatch)=>{
 export const getAllUsers = () => async (dispatch) => {
     try {
       const { data } = await api.get("/auth/all");
-      dispatch(getAllUsersSuccess(data));
+      dispatch(authSlice.actions.getAllUsersSuccess(data));
     } catch (err) {
       dispatch(
         getAllUsersFailed(err.response?.data?.message || "Failed to load users")
