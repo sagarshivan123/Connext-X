@@ -20,11 +20,18 @@ app.use(
         "http://localhost:5173",
         "https://connext-x.vercel.app"
       ];
-  
-      if (!origin || allowedOrigins.includes(origin) || origin.endsWith(".vercel.app")) {
+
+      if (
+        !origin ||
+        allowedOrigins.includes(origin) ||
+        origin.includes(".vercel.app")
+      ) {
         callback(null, true);
       } else {
-        callback(new Error("Not allowed by CORS"));
+        console.log("❌ Blocked:", origin);
+
+        // FIX
+        callback(null, false);
       }
     },
     credentials: true,
@@ -61,7 +68,6 @@ app.use("/api/upload", uploadRouter);
 export const io = new Server(server, {
   cors: {
     origin: (origin, callback) => {
-      // Use the same logic here as above
       if (
         !origin ||
         origin.includes("localhost") ||
@@ -69,7 +75,10 @@ export const io = new Server(server, {
       ) {
         callback(null, true);
       } else {
-        callback(new Error("Not allowed by CORS"));
+        console.log("❌ Socket Blocked:", origin);
+
+        // FIX
+        callback(null, false);
       }
     },
     credentials: true
@@ -164,6 +173,8 @@ io.on("connection", (socket) => {
 
 
 
-server.listen(4000, () => {
-  console.log('Server is running on port 4000');
+const PORT = process.env.PORT || 4000;
+
+server.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
 });
