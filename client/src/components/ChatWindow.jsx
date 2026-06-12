@@ -119,16 +119,37 @@ export default function ChatWindow() {
         </div>
         
         {chatType === "group" && (
-          <div className="relative">
-            <button onClick={() => setUi({ ...ui, menu: !ui.menu })} className="p-2 hover:bg-slate-700 rounded-full">⋮</button>
-            {ui.menu && (
-              <div className="absolute right-0 mt-2 w-48 bg-slate-800 border border-slate-700 rounded-xl shadow-2xl z-20 overflow-hidden">
-                <button className="w-full text-left p-3 hover:bg-slate-700 text-sm" onClick={() => setUi({...ui, addModal: true, menu: false})}>Add Member</button>
-                <button className="w-full text-left p-3 hover:bg-slate-700 text-sm" onClick={() => setUi({...ui, listModal: true, menu: false})}>Manage Members</button>
-              </div>
-            )}
-          </div>
-        )}
+  <div className="relative">
+    <button
+      onClick={() => setUi({ ...ui, menu: !ui.menu })}
+      className="p-2 hover:bg-slate-700 rounded-full"
+    >
+      ⋮
+    </button>
+
+    {ui.menu && (
+      <div className="absolute right-0 mt-2 w-48 bg-slate-800 border border-slate-700 rounded-xl shadow-2xl z-20 overflow-hidden">
+        <button
+          className="w-full text-left p-3 hover:bg-slate-700 text-sm"
+          onClick={() =>
+            setUi({ ...ui, addModal: true, menu: false })
+          }
+        >
+          Add Member
+        </button>
+
+        <button
+          className="w-full text-left p-3 hover:bg-slate-700 text-sm"
+          onClick={() =>
+            setUi({ ...ui, listModal: true, menu: false })
+          }
+        >
+          Group Members
+        </button>
+      </div>
+    )}
+  </div>
+)}
       </header>
 
       {/* Messages */}
@@ -212,7 +233,16 @@ export default function ChatWindow() {
                 <div key={m._id} className="flex items-center justify-between p-3 bg-slate-900/50 rounded-xl">
                   <div className="flex items-center gap-3">
                     <img src={m.avatar || `https://ui-avatars.com/api/?name=${m.name}`} className="w-8 h-8 rounded-full" alt="" />
-                    <span className="text-sm truncate max-w-30">{m.name}</span>
+                    <div>
+  <p className="text-sm">{m.name}</p>
+
+  {(activeGroup?.admin?._id === m._id ||
+    activeGroup?.admin === m._id) && (
+    <p className="text-xs text-yellow-400">
+      Admin
+    </p>
+  )}
+</div>
                   </div>
                   {isGroupAdmin && m._id !== user._id && (
                     <button onClick={() => handleMemberAction('remove', m._id)} className="text-red-500 text-xs font-bold hover:bg-red-500/10 p-2 rounded-lg">Remove</button>

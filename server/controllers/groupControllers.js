@@ -36,10 +36,21 @@ export const addMember=async(req,res)=>{
     if (!group.admin) {
       return res.status(400).json({ success: false, message: "Group admin not found" });
     }
-    if(group.admin.toString()!==req.user._id.toString()){
-      return res.status(403).json({ success: false, message: "Only admin can add members" });
+    const isMember = group.members.some(
+      member => member.toString() === req.user._id.toString()
+    );
+    
+    if (!isMember) {
+      return res.status(403).json({
+        success: false,
+        message: "Only group members can add users"
+      });
     }
-    if(group.members.includes(userId)){
+    if (
+      group.members.some(
+        member => member.toString() === userId.toString()
+      )
+    ) {
       return res.status(400).json({ success: false, message: "User is already a member" });
     }
     group.members.push(userId);
