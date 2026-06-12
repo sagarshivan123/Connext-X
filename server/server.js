@@ -16,22 +16,14 @@ const server = http.createServer(app);
 app.use(
   cors({
     origin: function (origin, callback) {
-      const allowedOrigins = [
-        "http://localhost:5173",
-        "https://connext-x.vercel.app"
-      ];
-
       if (
         !origin ||
-        allowedOrigins.includes(origin) ||
+        origin === process.env.CLIENT_URL ||
         origin.includes(".vercel.app")
       ) {
         callback(null, true);
       } else {
-        console.log("❌ Blocked:", origin);
-
-        // FIX
-        callback(null, false);
+        callback(new Error("Not allowed by CORS"));
       }
     },
     credentials: true,
